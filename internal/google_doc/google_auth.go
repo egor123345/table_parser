@@ -17,7 +17,7 @@ import (
 
 func googleAuthorization() (*docs.Service, error) {
 	ctx := context.Background()
-	b, err := os.ReadFile("credentials.json")
+	b, err := os.ReadFile("../../internal/google_doc/credentials.json")
 	if err != nil {
 		return nil, errors.New("Unable to read client secret file: " + err.Error())
 	}
@@ -38,7 +38,7 @@ func googleAuthorization() (*docs.Service, error) {
 
 // Retrieves a token, saves the token, then returns the generated client.
 func getClient(config *oauth2.Config) *http.Client {
-	tokFile := "token.json"
+	tokFile := "../../internal/google_doc/token.json"
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
 		tok = getTokenFromWeb(config)

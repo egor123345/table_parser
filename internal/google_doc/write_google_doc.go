@@ -33,26 +33,29 @@ func MakeTableOnGoogleDocs(contentTable [][]string) {
 }
 
 func createTableDocumentRequest(contentTable [][]string, endIndex int64) *docs.BatchUpdateDocumentRequest {
-	tableWithCells := []*docs.Request{
-		{
+	tableWithCells := []*docs.Request{}
+
+	if endIndex > 1 {
+		clearTable := &docs.Request{
 			DeleteContentRange: &docs.DeleteContentRangeRequest{
 				Range: &docs.Range{
 					StartIndex: 1,
 					EndIndex:   endIndex,
 				},
 			},
-		},
+		}
+		tableWithCells = append(tableWithCells, clearTable)
+	}
 
-		{
-			InsertTable: &docs.InsertTableRequest{
-				Rows:    int64(len(contentTable[0])),
-				Columns: int64(len(contentTable)),
-				Location: &docs.Location{
-					Index: 1,
-				},
+	tableWithCells = append(tableWithCells, &docs.Request{
+		InsertTable: &docs.InsertTableRequest{
+			Rows:    int64(len(contentTable[0])),
+			Columns: int64(len(contentTable)),
+			Location: &docs.Location{
+				Index: 1,
 			},
 		},
-	}
+	})
 
 	cells := fillTableCells(contentTable)
 	tableWithCells = append(tableWithCells, cells...)
